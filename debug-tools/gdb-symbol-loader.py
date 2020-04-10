@@ -42,7 +42,7 @@ def relocatesections(filename, addr):
         sections.append(sec)
 
         if sec["name"] == ".text":
-            textaddr = sec["addr"]
+            textaddr = sec["offset"]
 
     return (textaddr, sections)
 
@@ -68,7 +68,7 @@ class AddSymbolFileAll(gdb.Command):
         cmd = "add-symbol-file %s 0x%08x" % (filename, int(textaddr, 16) + offset)
 
         for s in sections:
-            addr = int(s["addr"], 16)
+            addr = int(s["offset"], 16)
             if s["name"] == ".text" or addr == 0:
                 continue
 
