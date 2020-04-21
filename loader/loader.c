@@ -6,15 +6,16 @@
  */
 
 #define _GNU_SOURCE
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
 #include <assert.h>
-#include <linux/limits.h>
-#include <stdbool.h>
 #include <dlfcn.h>
+#include <fcntl.h>
+#include <linux/limits.h>
+#include <malloc.h>
 #include <signal.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "compiler.h"
 #include "macros.h"
@@ -145,12 +146,21 @@ static void print_usage (void)
 
 // Returns the address of entry point and also populates a pointer
 // for the top of the new stack
-void load(int argc, char *argv[], void **new_entry, void **new_stack_top)
-{
+void load(int argc, char *argv[], void **new_entry, void **new_stack_top) {
   if (argc == 1) {
-	print_usage();
-	exit(-1);
+    print_usage();
+    exit(-1);
   }
+
+  // There 2 mallocs in memory because SaBRe loads 2 libcs (one for SaBRe) and
+  // one for the client (which is intercepted). These two mallocs will overlap
+  // their arenas as malloc uses brk(NULL) to initilize its arena, and this
+  // brk(NULL) will always return the same pointer. To avoid this we force
+  // SaBRe's malloc to completely skip the arena initilization and keep objects
+  // into seperate mmap() pages. This of course comes with a smal performance
+  // decrese, and the potential to OOM if we allocate too many items.
+  int ret = mallopt(M_MMAP_THRESHOLD, 0);
+  assert(ret == 1);
 
   stack_val_t *argv_null = (stack_val_t *)&argv[argc];
 
@@ -161,7 +171,7 @@ void load(int argc, char *argv[], void **new_entry, void **new_stack_top)
   ElfW(auxv_t) *av_phnum = NULL;
   size_t pagesize = 0;
 
-  ElfW(auxv_t) *av;
+  ElfW(auxv_t) * av;
   for (av = auxv;
        av_entry == NULL || av_phdr == NULL || av_phnum == NULL || pagesize == 0;
        ++av) {
