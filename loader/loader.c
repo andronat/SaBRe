@@ -159,8 +159,8 @@ void load(int argc, char *argv[], void **new_entry, void **new_stack_top) {
   // SaBRe's malloc to completely skip the arena initilization and keep objects
   // into seperate mmap() pages. This of course comes with a smal performance
   // decrese, and the potential to OOM if we allocate too many items.
-  int ret = mallopt(M_MMAP_THRESHOLD, 0);
-  assert(ret == 1);
+  // int ret = mallopt(M_MMAP_THRESHOLD, 0);
+  // assert(ret == 1);
 
   stack_val_t *argv_null = (stack_val_t *)&argv[argc];
 
