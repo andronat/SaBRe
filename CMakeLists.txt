@@ -37,6 +37,9 @@ endif()
 include("${CMAKE_SOURCE_DIR}/cmake/sabre_add_component.cmake")
 
 # Sources
+set(MI_STATIC_PIC ON CACHE BOOL "Enable PIC compilation of mimalloc")
+add_subdirectory("deps/mimalloc")
+
 add_subdirectory("arch/${CMAKE_SYSTEM_PROCESSOR}" arch)
 add_subdirectory("loader")
 file(GLOB subdirs CONFIGURE_DEPENDS "plugins/*")

@@ -157,11 +157,11 @@ void load(int argc, char *argv[], void **new_entry, void **new_stack_top)
   // one for the client (which is intercepted). These two mallocs will overlap
   // their arenas as malloc uses brk(NULL) to initialize its arena, and this
   // brk(NULL) will always return the same pointer. To avoid this we force
-  // SaBRe's malloc to completely skip the arena initialization and keep objects
-  // into separate mmap() pages. This of course comes with a small performance
-  // decrease, and the potential to OOM if we allocate too many items.
-  int ret = mallopt(M_MMAP_THRESHOLD, 0);
-  assert(ret == 1);
+  // SaBRe's malloc to completely skip the arena initilization and keep objects
+  // into seperate mmap() pages. This of course comes with a smal performance
+  // decrese, and the potential to OOM if we allocate too many items.
+  // int ret = mallopt(M_MMAP_THRESHOLD, 0);
+  // assert(ret == 1);
 
   stack_val_t *argv_null = (stack_val_t *)&argv[argc];
 
