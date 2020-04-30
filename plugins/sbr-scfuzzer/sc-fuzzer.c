@@ -386,6 +386,7 @@ long handle_syscall(long sc_no,
                     long arg6,
                     void *wrapper_sp) {
   (void)wrapper_sp;  // unused
+  load_sabre_tls();
 
   const struct sysent *entry = &sys_entries[sc_no];
 
@@ -407,6 +408,7 @@ long handle_syscall(long sc_no,
                                               .sys_ret = sys_ret};
     print_system_call(&log_args, caused_failure);
   }
+  load_client_tls();
   return sys_ret;
 }
 

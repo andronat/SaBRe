@@ -154,6 +154,8 @@ int ifstat(int fd, struct stat *statbuf) {
 
 long handle_syscall(long sc_no, long arg1, long arg2, long arg3, long arg4,
                     long arg5, long arg6, void *wrapper_sp) {
+  load_sabre_tls();
+
   if (sc_no == SYS_clone && arg2 != 0) { // clone
     void *ret_addr = get_syscall_return_address(wrapper_sp);
     return clone_syscall(arg1, (void *)arg2, (void *)arg3, (void *)arg4, arg5,
@@ -174,6 +176,7 @@ long handle_syscall(long sc_no, long arg1, long arg2, long arg3, long arg4,
     return ifstat(arg1, (struct stat *)arg2);
   }
 
+  load_client_tls();
   return real_syscall(sc_no, arg1, arg2, arg3, arg4, arg5, arg6);
 }
 

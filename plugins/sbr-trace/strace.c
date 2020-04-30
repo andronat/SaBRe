@@ -407,8 +407,11 @@ long handle_syscall(long sc_no,
                     long arg5,
                     long arg6,
                     void *wrapper_sp) {
+  load_sabre_tls();
   (void)wrapper_sp;  // unused
-  return handle_syscall_real(sc_no, arg1, arg2, arg3, arg4, arg5, arg6, false);
+  long ret = handle_syscall_real(sc_no, arg1, arg2, arg3, arg4, arg5, arg6, false);
+  load_client_tls();
+  return ret;
 }
 
 long handle_syscall_clock_gettime(long arg1, long arg2) {
