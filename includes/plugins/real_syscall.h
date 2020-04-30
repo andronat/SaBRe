@@ -22,4 +22,7 @@ long clone_syscall (unsigned long flags,
             void** args
             );
 
+void load_client_tls();
+void load_sabre_tls();
+
 #endif /* !REAL_SYSCALL_H */

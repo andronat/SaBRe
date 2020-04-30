@@ -198,6 +198,25 @@ static int intercept_sbr (struct mem_chunk mmaps []) {
 static unsigned long loader_tls_addr;
 static unsigned long client_tls_addr;
 
+// TODO: This needs to be thread-safe and be updated during a clone
+void load_client_tls() {
+  if (client_tls_addr == 0) {
+    return;
+  }
+  if (syscall(SYS_arch_prctl, ARCH_SET_FS, client_tls_addr) == -1) {
+    _nx_fatal_printf("Failed to switch to client TLS\n");
+  }
+}
+
+void load_sabre_tls() {
+  if (loader_tls_addr == 0) {
+    return;
+  }
+  if (syscall(SYS_arch_prctl, ARCH_SET_FS, loader_tls_addr) == -1) {
+    _nx_fatal_printf("Failed to switch to SaBRe TLS\n");
+  }
+}
+
 // %fs holds the TLS start address, so ARCH_SET_FS must be handled specially
 long arch_set_fs_handler(unsigned long addr) {
   if (loader_tls_addr == 0) {
