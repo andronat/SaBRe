@@ -62,9 +62,7 @@ int iopenat(int dirfd, const char *pathname, int flags, mode_t mode) {
     char *pathname_dup = strdup(pathname);
     assert(pathname_dup != NULL);
 
-    printf("Pathname is: %s!\n", pathname);
     int ret = zbox_repo_create_dir_all(repo, dirname(pathname_dup));
-    printf("Pathname is now is: %s!\n", pathname);
     assert(!ret);
     free(pathname_dup);
 
