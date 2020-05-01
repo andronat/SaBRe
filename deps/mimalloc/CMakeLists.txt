@@ -15,6 +15,7 @@ option(MI_LOCAL_DYNAMIC_TLS "Use slightly slower, dlopen-compatible TLS mechanis
 option(MI_BUILD_TESTS       "Build test executables" ON)
 option(MI_CHECK_FULL        "Use full internal invariant checking in DEBUG mode (deprecated, use MI_DEBUG_FULL instead)" OFF)
 option(MI_PADDING           "Enable padding to detect heap block overflow (only in debug mode)" ON)
+option(MI_STATIC_PIC        "Compile the static version with PIC" OFF)
 
 include("cmake/mimalloc-config-version.cmake")
 
@@ -199,6 +200,9 @@ endif()
 
 # static library
 add_library(mimalloc-static STATIC ${mi_sources})
+if(MI_STATIC_PIC)
+  set_property(TARGET mimalloc-static PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 target_compile_definitions(mimalloc-static PRIVATE ${mi_defines} MI_STATIC_LIB)
 target_compile_options(mimalloc-static PRIVATE ${mi_cflags})
 target_link_libraries(mimalloc-static PUBLIC ${mi_libraries})
@@ -235,6 +239,9 @@ endif()
 
 # single object file for more predictable static overriding
 add_library(mimalloc-obj OBJECT src/static.c)
+if(MI_STATIC_PIC)
+  set_property(TARGET mimalloc-obj PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 target_compile_definitions(mimalloc-obj PRIVATE ${mi_defines})
 target_compile_options(mimalloc-obj PRIVATE ${mi_cflags})
 target_include_directories(mimalloc-obj PUBLIC
