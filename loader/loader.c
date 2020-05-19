@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <dlfcn.h>
 #include <fcntl.h>
+#include <jemalloc/jemalloc.h>
 #include <linux/limits.h>
 #include <malloc.h>
 #include <signal.h>
@@ -161,8 +162,9 @@ void load(int argc, char *argv[], void **new_entry, void **new_stack_top)
   // SaBRe's malloc to completely skip the arena initialization and keep objects
   // into separate mmap() pages. This of course comes with a small performance
   // decrease, and the potential to OOM if we allocate too many items.
-  int ret = mallopt(M_MMAP_THRESHOLD, 0);
-  assert(ret == 1);
+  // const char *options = "disabled";
+  // mallctl("arena.MALLCTL_ARENAS_ALL.dss", NULL, NULL, &options, sizeof(const char *));
+  // malloc_stats_print(NULL, NULL, NULL);
 
   // Setup our custom TLS
   register_first_tid();
